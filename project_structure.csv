@@ -1,0 +1,41 @@
+File Path,Description,Category,Details,Priority,Est. LOC
+main.py,Main entry point,Core,Complete CLI interface with all commands,Critical,200
+config.yaml,Configuration file,Config,All hyperparameters and settings,Critical,250
+requirements.txt,Dependencies,Setup,All package dependencies with versions,Critical,50
+README.md,Documentation,Docs,Complete setup and usage guide,Critical,300
+setup.py,Installation script,Setup,Package installation configuration,Medium,80
+.gitignore,Git ignore file,Config,Files to exclude from version control,Low,30
+src/__init__.py,Package init,Core,Empty init file,Low,1
+src/data/__init__.py,Data package init,Data,Data module initialization,Low,5
+src/data/dataset_loader.py,Dataset loader,Data,Load HuggingFace and local datasets,High,180
+src/data/preprocessor.py,Data preprocessor,Data,Image preprocessing and normalization,High,150
+src/data/augmentation.py,Data augmentation,Data,Albumentations augmentation pipeline,High,120
+src/models/__init__.py,Models package init,Models,Models module initialization,Low,5
+src/models/yolo_detector.py,YOLO detector,Models,YOLO11 detection implementation,Critical,200
+src/models/mobilenet_classifier.py,MobileNet classifier,Models,MobileNetV2 classification,Critical,180
+src/models/ensemble_model.py,Ensemble model,Models,Fusion of YOLO and MobileNet,Critical,160
+src/training/__init__.py,Training package init,Training,Training module initialization,Low,5
+src/training/train_yolo.py,YOLO training,Training,Complete YOLO training pipeline,High,200
+src/training/train_mobilenet.py,MobileNet training,Training,Complete MobileNet training,High,180
+src/training/train_ensemble.py,Ensemble training,Training,Train ensemble fusion module,High,150
+src/inference/__init__.py,Inference package init,Inference,Inference module initialization,Low,5
+src/inference/detect.py,Detection pipeline,Inference,YOLO detection inference,High,120
+src/inference/classify.py,Classification pipeline,Inference,MobileNet classification inference,High,100
+src/inference/ensemble_predict.py,Ensemble prediction,Inference,Complete ensemble inference pipeline,High,180
+src/utils/__init__.py,Utils package init,Utils,Utils module initialization,Low,5
+src/utils/visualization.py,Visualization utils,Utils,Draw bounding boxes and save results,Medium,120
+src/utils/metrics.py,Metrics computation,Utils,"Calculate mAP, precision, recall, F1",Medium,150
+src/utils/logger.py,Logging utilities,Utils,Structured logging setup,Medium,60
+src/utils/config.py,Config loader,Utils,Load and validate configuration,Medium,80
+scripts/download_datasets.py,Dataset downloader,Scripts,Download from HuggingFace,High,100
+scripts/prepare_data.py,Data preparation,Scripts,Prepare data for training,High,150
+scripts/evaluate_model.py,Model evaluation,Scripts,Comprehensive evaluation,Medium,120
+scripts/export_models.py,Model export,Scripts,"Export to ONNX, TorchScript",Medium,80
+notebooks/01_data_exploration.ipynb,Data exploration,Notebooks,Explore datasets,Low,100
+notebooks/02_model_training.ipynb,Model training,Notebooks,Interactive training,Low,120
+notebooks/03_evaluation.ipynb,Model evaluation,Notebooks,Evaluate models,Low,100
+tests/__init__.py,Tests package init,Tests,Tests initialization,Low,1
+tests/test_data.py,Data tests,Tests,Unit tests for data,Low,80
+tests/test_models.py,Model tests,Tests,Unit tests for models,Low,100
+tests/test_inference.py,Inference tests,Tests,Unit tests for inference,Low,80
+data/datasets.yaml,YOLO dataset config,Data,YOLO dataset configuration,High,30

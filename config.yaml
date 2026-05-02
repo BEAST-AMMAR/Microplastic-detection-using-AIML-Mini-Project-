@@ -1,0 +1,375 @@
+# ==================================================================================
+# MINIPROJECT 1.0 - CONFIGURATION FILE
+# Microplastics Detection System Configuration
+# ==================================================================================
+
+# Project Information
+project:
+  name: "MINIProject 1.0"
+  version: "1.0.0"
+  description: "Microplastics Detection System with YOLOv8 + MobileNetV2 + XGBoost"
+
+# Data Configuration
+data:
+  # Base resources directory containing Training/Validation/Testing
+  raw_dir: "Resources"
+  processed_dir: "Resources/processed"
+  augmented_dir: "Resources/augmented"
+  # Explicit train/val/test folders inside Resources (existing repo layout)
+  train_dir: "Resources/1_Training"
+  val_dir: "Resources/2_Validation"
+  test_dir: "Resources/3_Testing"
+  train_split: 0.7
+  val_split: 0.2
+  test_split: 0.1
+  image_size: [640, 640]
+  batch_size: 16
+  num_workers: 4
+
+# YOLO Configuration
+yolo:
+  model_variant: "yolov8n"  # Options: yolov8n, yolov8s, yolov8m, yolov8l, yolov8x
+  pretrained_weights: "yolov8n.pt"
+  conf_threshold: 0.5
+  iou_threshold: 0.45
+  max_det: 1000
+  training:
+    epochs: 150
+    batch_size: 16
+    learning_rate: 0.001
+    weight_decay: 0.0005
+    momentum: 0.937
+    warmup_epochs: 3
+    warmup_momentum: 0.8
+    warmup_bias_lr: 0.1
+    box: 7.5
+    cls: 0.5
+    dfl: 1.5
+    patience: 50
+    save_period: 10
+    cache: true
+    device: "cpu"  # GPU device, use "cpu" for CPU training
+    workers: 8
+    project: "outputs"
+    name: "yolo_training"
+    exist_ok: true
+    pretrained: true
+    optimizer: "auto"  # SGD, Adam, AdamW, NAdam, RAdam, RMSProp, auto
+    verbose: true
+    seed: 0
+    deterministic: true
+    single_cls: false
+    rect: false
+    cos_lr: false
+    close_mosaic: 10
+    resume: false
+    amp: true  # Automatic Mixed Precision
+    fraction: 1.0
+    profile: false
+    freeze: null
+    multi_scale: false
+    overlap_mask: true
+    mask_ratio: 4
+    dropout: 0.0
+    val: true
+    split: "val"
+    save_json: false
+    save_hybrid: false
+    conf: null
+    iou: 0.7
+    max_det: 300
+    half: false
+    dnn: false
+    plots: true
+
+# MobileNetV2 Configuration
+mobilenet:
+  input_shape: [224, 224, 3]
+  alpha: 1.0  # Width multiplier
+  include_top: true
+  weights: "imagenet"
+  classes: 2
+  training:
+    epochs: 50
+    batch_size: 32
+    learning_rate: 0.001
+    momentum: 0.9
+    weight_decay: 0.0001
+    patience: 10
+    min_delta: 0.001
+    monitor: "val_accuracy"
+    mode: "max"
+    restore_best_weights: true
+    save_best_only: true
+    save_weights_only: false
+    verbose: 1
+    validation_split: 0.2
+    shuffle: true
+    class_weight: null
+    sample_weight: null
+    initial_epoch: 0
+    steps_per_epoch: null
+    validation_steps: null
+    validation_batch_size: null
+    validation_freq: 1
+    max_queue_size: 10
+    workers: 1
+    use_multiprocessing: false
+
+# Ensemble Configuration
+ensemble:
+  method: "xgboost"  # Options: xgboost, weighted_voting, stacking
+  weights:
+    yolo: 0.4
+    mobilenet: 0.3
+    xgboost: 0.3
+  xgboost:
+    max_depth: 6
+    learning_rate: 0.1
+    n_estimators: 100
+    subsample: 0.8
+    colsample_bytree: 0.8
+    random_state: 42
+    eval_metric: "logloss"
+    early_stopping_rounds: 10
+    verbose: true
+
+# Preprocessing Configuration
+preprocessing:
+  methods:
+    - "bilateral_filter"
+    - "clahe_enhancement"
+    - "histogram_equalization"
+    - "morphological_operations"
+    - "gamma_correction"
+  bilateral_filter:
+    d: 9
+    sigma_color: 75
+    sigma_space: 75
+  clahe:
+    clip_limit: 2.0
+    tile_grid_size: [8, 8]
+  morphological:
+    kernel_size: [5, 5]
+    operation: "open_close"
+  gamma:
+    gamma: 1.5
+
+# Augmentation Configuration
+augmentation:
+  enabled: true
+  probability: 0.8
+  transforms:
+    - name: "HorizontalFlip"
+      p: 0.5
+    - name: "VerticalFlip"
+      p: 0.2
+    - name: "RandomRotate90"
+      p: 0.5
+    - name: "Transpose"
+      p: 0.2
+    - name: "RandomBrightnessContrast"
+      brightness_limit: 0.2
+      contrast_limit: 0.2
+      p: 0.5
+    - name: "HueSaturationValue"
+      hue_shift_limit: 20
+      sat_shift_limit: 30
+      val_shift_limit: 20
+      p: 0.3
+    - name: "GaussNoise"
+      var_limit: [10, 50]
+      p: 0.2
+    - name: "GaussianBlur"
+      blur_limit: [3, 7]
+      p: 0.2
+    - name: "RandomResizedCrop"
+      height: 640
+      width: 640
+      scale: [0.8, 1.0]
+      ratio: [0.75, 1.333]
+      p: 0.5
+
+# Training Configuration
+training:
+  mixed_precision: true
+  gradient_clip_norm: 1.0
+  gradient_clip_value: null
+  accumulate_grad_batches: 1
+  auto_lr_find: false
+  benchmark: true
+  deterministic: null
+  enable_progress_bar: true
+  log_every_n_steps: 1
+  num_sanity_val_steps: 2
+  reload_dataloaders_every_n_epochs: 0
+  replace_sampler_ddp: true
+  sync_batchnorm: false
+  tpu_cores: null
+  track_grad_norm: -1
+
+# Inference Configuration
+inference:
+  batch_size: 1
+  device: "auto"  # auto, cpu, cuda, cuda:0, cuda:1, etc.
+  half: false  # Use FP16 half-precision inference
+  dnn: false  # Use OpenCV DNN for ONNX inference
+  agnostic_nms: false
+  max_det: 1000
+  vid_stride: 1
+  visualize: false
+  augment: false
+  save_crop: false
+  save_txt: false
+  save_conf: false
+  save_json: false
+  project: "outputs"
+  name: "inference"
+  exist_ok: false
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  datefmt: "%Y-%m-%d %H:%M:%S"
+  handlers:
+    - type: "console"
+      level: "INFO"
+    - type: "file"
+      level: "DEBUG"
+      filename: "outputs/logs/app.log"
+      max_bytes: 10485760  # 10MB
+      backup_count: 5
+  loggers:
+    ultralytics: "WARNING"
+    tensorflow: "WARNING"
+    matplotlib: "WARNING"
+
+# Output Configuration
+output:
+  results_dir: "outputs/results"
+  visualizations_dir: "outputs/visualizations"
+  logs_dir: "outputs/logs"
+  checkpoints_dir: "outputs/checkpoints"
+  models_dir: "models"
+  save_predictions: true
+  save_visualizations: true
+  save_logs: true
+  save_checkpoints: true
+
+# Cloud Configuration (ThingSpeak)
+cloud:
+  thingspeak:
+    enabled: false
+    channel_id: ""
+    write_key: ""
+    read_key: ""
+    base_url: "https://api.thingspeak.com"
+    timeout: 5
+    retry_attempts: 3
+    retry_delay: 1
+    offline_cache: true
+    cache_dir: "outputs/cache"
+    auto_sync: true
+    sync_interval: 300  # seconds
+
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 5000
+  debug: false
+  threaded: true
+  cors_origins: ["*"]
+  max_content_length: 16777216  # 16MB
+  upload_folder: "uploads"
+  allowed_extensions: [".jpg", ".jpeg", ".png", ".bmp", ".tiff"]
+  max_file_size: 16777216  # 16MB
+
+# Performance Configuration
+performance:
+  enable_gpu: true
+  gpu_memory_fraction: 0.9
+  allow_growth: true
+  inter_op_parallelism_threads: 0
+  intra_op_parallelism_threads: 0
+  device_count: {"CPU": 1, "GPU": 0}
+  allow_soft_placement: true
+  log_device_placement: false
+
+# Security Configuration
+security:
+  enable_cors: true
+  cors_origins: ["*"]
+  enable_csrf: false
+  secret_key: "change-this-in-production"
+  session_timeout: 3600
+  rate_limit: "100 per hour"
+  file_validation: true
+  content_type_check: true
+
+# Monitoring Configuration
+monitoring:
+  enable_metrics: true
+  metrics_port: 9090
+  enable_health_checks: true
+  health_check_interval: 30
+  enable_profiling: false
+  profile_memory: false
+  profile_time: true
+
+# Testing Configuration
+testing:
+  enable_unit_tests: true
+  enable_integration_tests: true
+  test_coverage: true
+  coverage_threshold: 80
+  enable_benchmarks: true
+  benchmark_iterations: 100
+  enable_stress_tests: false
+
+# Development Configuration
+development:
+  enable_debug: false
+  enable_reloader: false
+  enable_profiler: false
+  enable_linting: true
+  enable_formatting: true
+  enable_type_checking: false
+  auto_format: true
+  auto_lint: true
+
+# Deployment Configuration
+deployment:
+  environment: "development"  # development, staging, production
+  enable_ssl: false
+  ssl_cert: null
+  ssl_key: null
+  enable_gzip: true
+  enable_caching: true
+  cache_timeout: 300
+  enable_load_balancer: false
+  load_balancer_url: null
+  enable_monitoring: true
+  monitoring_url: null
+
+# Backup Configuration
+backup:
+  enable_backups: true
+  backup_interval: 86400  # 24 hours
+  backup_retention: 7  # days
+  backup_dir: "backups"
+  compress_backups: true
+  encrypt_backups: false
+  backup_password: null
+
+# Update Configuration
+update:
+  enable_auto_update: false
+  update_check_interval: 86400
+  update_url: "https://api.github.com/repos/your-repo/releases/latest"
+  enable_beta_updates: false
+  backup_before_update: true
+
+# ==================================================================================
+# END OF CONFIGURATION
+# ==================================================================================
